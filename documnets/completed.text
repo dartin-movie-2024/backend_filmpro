@@ -1,0 +1,98 @@
+                                                                         FilmyPro
+
+
+2.	Production page
+    Screen count 2, api count -4
+    1.	Existing production details screen with add new production button To display existing productions required get api
+         When user click on movie image it should populate related navigation on side bar –required get api
+
+    Type of production it is dropdown get api
+    Submit click post api
+    4.	When user click on movie name top gun navigation bar is display to get all
+        the details related to pertular movie name based on name all the details   should be populate
+    5.	When user click on crew option
+    6.	We have options like  departments , designations
+
+
+4.	Director Login
+    Screen 1
+    1. Verify crew screen get api
+    2. Director have authority to check and edit the crew details , for edit and save required post api
+    3. Search Crew is there for this required get api
+    Screen 2
+    Upload script screen –in this screen director have options like view and assign the script for assign required post api.
+    Screen 3
+    Setup Board Screen –
+    Scene setup, character setup, location setup need api  I guess need to disc
+    When user click on view
+    Screen 4
+    1. Scenes setup screen should display
+    In this screen we have the provision to add table headings, means what are the rows we required to define that particular task.
+               2. After click on apply we have provision like edit option to change the
+                  Details for this required post api
+              Screen 5
+              Assign scenes task screen here for save button required post api.
+             Screen 6
+    1.	When user click on character setup view button it is navigate to character setup screen
+    2.	Here we have provision like to add required headings of the table and click on apply
+    3.	Again we have edit option to assign the task
+    4.	When click on edit it is navigate  to assigned character screen
+           Screen7
+       Assigned character screen is going to display for save button required post api.
+    Screen 8
+    When user click on Location setup view
+    1.	When user click on character setup view button it is navigate to Location setup screen
+    2.	Here we have provision like to add required headings of the table and click on apply
+    3.	Again we have edit option to assign the task
+    4.	When click on edit it is navigate  to assigned location screen
+    Screen 9
+       Assigned Location screen is going to display for save button required post api.
+    Screen 10
+    1.These all assigned careens we able to see on consolidated screen –slide 70
+    2.In this consolidated screen we able to see all the details of opened scene and open character and open location details as well as assigned task and submitted task we able to see parallel
+    3.To meet above requirements we need get api to display all details on consolidated form
+    1.	When we click on view in consolidated form we are navigate to assigned task page
+    2.	When click on More option it is navigate to setup screen (slide 73)
+    Screen 11
+
+    Assistant Director Login
+    1.	After AD login with his credentials able to see existing production screen , after click on Movie name we able to see navigation.
+    Verify Crew Screen
+    1.	In this Screen Ad don’t have permission to edit the details just he able to view the details.
+    Upload Script Screen
+    Same as Director screen
+    Input Scene Setup
+     All screens same as director screens
+
+    Note : Unable to understand from 103 slide
+
+
+Director Screens and apis count
+1.	Verify crew-1
+2.	Upload script-1
+3.	Screen setup-3
+4.	Scene setup table screen -4
+5.	Assign scene setup-5
+6.	Assign character setup-6
+7.	Character setup table format -7
+8.	Location setup -8
+9.	Assign location setup-9
+10.	consolidate form -10  slide 120
+# 11.	Apis count
+13 apis director login
+
+
+======================================= Done ======================================
+1.	Login page ===> Done
+    Screen count-1, api count -1
+    Screen count – login page with login button
+    On click on login button required post api.
+
+3.	Department and Sub department Screen
+Screen count -1, api count -3
+1.	¬¬¬to populate all the departments need get api
+2.	If click on add new department  and sub department need post apis
+    4.Designations Screen
+        Screen count -1 , if options are static no need to call api otherwise
+           required get api
+    5. Add Crew
