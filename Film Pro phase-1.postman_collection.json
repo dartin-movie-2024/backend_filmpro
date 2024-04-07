@@ -1,0 +1,48 @@
+{
+	"info": {
+		"_postman_id": "48f79a7c-d139-411d-b3cf-f73cc2484567",
+		"name": "Film Pro phase-1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24380844",
+		"_collection_link": "https://galactic-equinox-492255.postman.co/workspace/Team-Workspace~97f27ac3-06b7-42b5-8506-16735525a434/collection/24380844-48f79a7c-d139-411d-b3cf-f73cc2484567?action=share&source=collection_link&creator=24380844"
+	},
+	"item": [
+		{
+			"name": "upload_script",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "productname",
+							"value": "example",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/D:/Essbase/projects-2023/Movie V2/script_schedule_test.txt"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8001/upload_script",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8001",
+					"path": [
+						"upload_script"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

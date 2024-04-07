@@ -1,0 +1,328 @@
+Notes
+	AD - asst. Driector
+	D - director
+
+
+1. /api/get_crew - GET  [AD, D]
+	headers = {
+	  'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+
+2. /api/production_list - GET [AD, D]
+
+	headers = {
+	  'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+
+3. api/upload_crew - POST [D]
+
+	payload = {'Crew_id': 6,
+	'Crew_Name': 'Manoj',
+	'Department_Id': 3,
+	'SubDepartment_Id': 5,
+	'Designation_Id': 7}
+
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+4. api/get_scene_setup - GET [AD, D]
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+
+5. api/get_character_setup	- POST  [AD, D]
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload = {'Production_id': 14}
+
+6. api/get_location_setup - POST [AD, D]
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload = {'Production_id': 14}
+7. api/update_scene_setup - POST[AD, D]
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload = {
+		'Scene_Id': 1,
+            'Script_Id': 1,
+           'Scene_Type': "Action",
+            'Scene_day_condition': "Day",
+            'Script_Pages': 2,
+           'Scene_Location': "HYD",
+            'Shoot_Location': "Hyd",
+            'Scene_time' : datetime,
+           'Shoot_Time': datetime,
+            'Short_description', "qwerty"
+            'Status': "OPEN"
+            'Assigned_To': 1
+            
+	}
+	
+8. api/update_character_setup
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload = {'Scene_Character_Id': 1,
+		'Script_pages': '1-6',
+		'Scene_Id': 1,
+		'Character_id': 1,
+		'Features_Required': 'MAin',
+		'No_Of_Scenes':4,
+		'Shoot_Time_Minutes': 240,
+		'Screen_Time_Minutes': 30,
+		'Assigned_To': 2}
+		
+9. api/update_production
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	 payload = {'Production_id': 3,
+	'Production_Name': 'AVG',
+	'Production_Type_Id': 3,
+	'Image_Path': 'sala.jpg'}
+	
+10.api/create_department
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload =  {'Production_id': 3,
+		'Department_Name': 'PD',
+		'Total_Members': 20,
+		'Department_Type': 'MAIN'}
+		
+11. api/update_department
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload =  {
+		'Production_id': 3,
+		'Department_Name': 'PD',
+		'Total_Members': 20,
+		'Department_Type': 'MAIN'
+		}
+
+
+12. api/create_subdepartment - Post
+    headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload =  {
+		'Production_id': 3,
+		'Department_Id': 3,
+		'Total_Members': 20,
+		'SubDepartment_Name': 'demo',
+		}
+13. api/update_subdepartment - Post
+    headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload =  {
+	    'SubDepartment_Id':31
+		'Production_id': 3,
+		'Department_Id': 3,
+		'Total_Members': 20,
+		'SubDepartment_Name': 'demo',
+		}
+
+14. api/create_designations
+    payload = {
+        'Department_Id': 3,
+        'Designation_Name': 'demo1',
+        'SubDepartment_Id': 31
+        }
+
+
+Search
+----------
+1. api/director_list - POST
+    headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+
+	i. body = {} - return get all director list
+	ii. body = {'production_id': 4} - return get production wise
+
+
+2. api/asstdirector_list - POST
+    headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+
+	i. body = {} - return get all asst. director list
+	ii. body = {'production_id': 4} - return get asst. director wise
+
+
+3. api/get_character_setup - POST # assign char list
+
+    headers = {
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+        }
+	payload = {'Production_id': 14}
+
+4. /api/update_assign_char
+
+    headers = {
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+        }
+	payload = {'Character_id': [5,10],'Assigned_To': 3}
+
+5. api/get_location_setup - POST
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload = {'Production_id': 14}
+
+6. api/update_assign_location - POST
+    headers = {
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+            }
+	payload = {'Location_Id': [5],'Assigned_To': 3}
+
+7. /api/approve_assign_char - post
+    headers
+    payload = {
+        "Scene_Character_Id": 1,
+        "Character_id":1
+    }
+
+8. /api/approve_assign_location -
+    headers
+    payload = {
+        "Location_Id": 1,
+        "Scene_Location_Id":1
+    }
+
+9. /api/get_actors - GET
+    headers
+
+------------------------ ############################ ------------------------------------
+Director
+--------
+
+1. /api/get_crew - GET
+	headers = {
+	  'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+
+2. /api/production_list - GET
+
+	headers = {
+	  'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+
+3. api/upload_crew - POST
+
+	payload = {'Crew_id': 6,
+	'Crew_Name': 'Manoj',
+	'Department_Id': 3,
+	'SubDepartment_Id': 5,
+	'Designation_Id': 7}
+
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+4. api/get_scene_setup - GET
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+
+5. api/get_character_setup	- POST
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload = {'Production_id': 14}
+
+6. api/get_location_setup - POST
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload = {'Production_id': 14}
+7. api/update_scene_setup - POST
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload = {
+		'Scene_Id': 1,
+            'Script_Id': 1,
+           'Scene_Type': "Action",
+            'Scene_day_condition': "Day",
+            'Script_Pages': 2,
+           'Scene_Location': "HYD",
+            'Shoot_Location': "Hyd",
+            'Scene_time' : datetime,
+           'Shoot_Time': datetime,
+            'Short_description', "qwerty"
+            'Status': "OPEN"
+            'Assigned_To': 1
+
+	}
+
+
+
+1. Get actors list - Done
+2. Assign character to actor
+3. Add new actor
+4. add new location test
+
+
+
+| No  | Slide Number | API             | Purpose                                  |
+| --- | ------------ | --------------- | ---------------------------------------- |
+| 1   | 139          | `/user/details` | Get list of movie characters             |
+| 2   | 140          | `/user/details` | POST call to generate casting call       |
+| 3   | 143          | `/user/details` | Get list of all available actors         |
+| 4   | 143          | `/user/details` | POST call to select artist for character |
+| 5   | 145          | `/user/details` | POST call to add new actor into db       |
+| 6   | 148          | `/user/details` | Get list of movie locations              |
+| 7   | 149          | `/user/details` | Get list of all available real locations |
+| 8   | 149          | `/user/details` | Select real location for movie location  |
+| 9   | 151          | `/user/details` | POST call to add new location into db    |
+
+
+
+1. api/get_character_setup - POST - 139, 140
+
+    headers = {
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+        }
+	payload = {'Production_id': 14}
+
+
+2. api/get_actors - GET - 143 -  Get list of all available actors
+3. api/char_assign_actor - POST - 143 - POST call to select artist for character
+    payload: {"Character_id": 1, actor_id:1}
+4. api/create_actor - 145 - POST call to add new actor into db
+
+    payload : {'ActorName': "",'Gender': "",  'Height': "", 'ActingAge': ""
+            'HairColour': "", 'EyeColour':"", 'Language':"", 'Email': "", 'PhoneNumber':"",
+            'PerformingArts':"", 'Athletics':"", 'DanceAndMusic': "", "'Address':"",
+            'FilmExperience':"", 'Roles': "", 'Films':"", 'Role': "")}
+
+5. api/create_location - 151- POST call to add new location into db
+            LocationName = request.form.get('LocationName', None)
+            LocationType = request.form.get('LocationType', None)
+            Category = request.form.get('Category', None)
+            Specifications = request.form.get('Specifications', None)
+            BudgetDay = request.form.get('BudgetDay', None)
+            Country = request.form.get('Country', None)
+            Address = request.form.get('Address', None)
+            OwnerDetails = request.form.get('OwnerDetails', None)
+            PreviousFilms = request.form.get('PreviousFilms', None)
+            Permissions = request.form.get('Permissions', None)
+
+
+6. api/get_location_setup - POST - 148 Get list of movie locations
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload = {'Production_id': 14}
+
+7. /api/approve_assign_location - POST
+
+	headers = {
+		'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJQcm9kdWN0aW9uX2lkIjoiMyIsImxvZ2luX3R5cGUiOiJBZG1pbiJ9.ekUr9ZiKEODQFqLOSTM1XTDqkLiq3YQgcxtlDjgin3c'
+	}
+	payload = {'Location_Id': 1, "Scene_Location_Id":1}
