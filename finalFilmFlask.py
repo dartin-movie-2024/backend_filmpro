@@ -18,7 +18,21 @@ from werkzeug.utils import secure_filename
 from extraction import main_func
 
 app = Flask(__name__)
-CORS(app)
+# test=CORS(app)
+# CORS(app)
+# CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/api/*": {"origins": "*", "allow_headers": ["Authorization"]}})
+# app = Flask(__name__)
+# CORS(app, resources={r"/api/*": {"origins": "http://localhost:3001", "allow_headers": "Authorization"}})
+# cors = CORS(app, resources={
+#     r"/api/*": {
+#         "origins": "http://localhost:3001",
+#         "allow_headers": ["Authorization", "Content-Type"],
+#         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+#     }
+# })
+
+# test.init_app(app,origins= "http://127.0.0.1:3001",allow_headers=["Content-Type", "Authorization"])
 app.secret_key = constant.secret_key_hex
 
 def post_with_options(route):
@@ -586,7 +600,86 @@ def updateProductionDetailsAPI():
 
     except Exception as ex:
         return jsonify({"status": 400, 'message': f'An error occurred while updating the sence: {str(ex)}'}), 400
+# @app.route('/add_production', methods = ['POST'])
+# def addProduction():
+#     Production_name = request.form.get('Production_name', None)
+#     Type_of_production = request.form.get('Type_of_production', None)
+#     image_upload = request.files.get('image_upload',None)
+#     print("Production_name:",Production_name,"Type_of_production:",Type_of_production,"image_upload:",image_upload)
+#
+#     if not Production_name:
+#         return jsonify({"status": 400, "message": "Production_name field is required"})
+#     if not Type_of_production:
+#         return jsonify({"status": 400, "message": "Type_of_production field is required"})
+#     if not image_upload:
+#         return jsonify({"status": 400, "message": "image_upload is required"})
+#     conn = db_model.dbConnect()
+#     cursor = conn.cursor()
+#     try:
+#         query = f"SELECT * from Tbl_Productions"
+#         df = pd.read_sql(query,conn)
+#         print(len(df))
+#         if len(df)>0:
+#
+#             update_production_name_query = "UPDATE Tbl_Productions SET Production_Name = ?"
+#             update_production_type_query = "UPDATE Master_ProductionTypes SET Production_Type = ?"
+#
+#             # Execute the queries with parameters
+#             cursor.execute(update_production_name_query, (Production_name,))
+#             cursor.execute(update_production_type_query, (Type_of_production,))
+#             conn.commit()
+#             cursor.close()
+#             return jsonify({'message': 'Production is updated successfully'}), 200
+#         else:
+#             return jsonify({"message": 'Production is not updated successfully'}), 400
+#     except Exception as e:
+#         conn.rollback()
+#         return jsonify({'error': f'An error occurred while updating the production: {str(e)}'}), 500
+#     finally:
+#         conn.close()
+@app.route('/api/add_production', methods=['POST', 'OPTIONS'])
+def addProductionDetailsAPI():
+    try:
+        if request.method == 'OPTIONS':
+            response = jsonify({'message': 'Preflight check successful'})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Methods', 'POST')
+            response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+            return response
 
+        status, response, msg = utils.getAuthorizationDetails(request)
+        if msg != "success":
+            return jsonify({"status": 401, "message": msg}), response
+
+
+        Production_Name = request.form.get('Production_Name')
+        Production_Type_Id = request.form.get('Production_Type_Id')
+        Image_Path = request.form.get('Image_Path')
+
+        if (Production_Name or Production_Type_Id or Image_Path) == None:
+            return jsonify({"status": 400, "message": "all the fields are required"})
+
+        insert_query_set = (Production_Name, Production_Type_Id, Image_Path)
+
+        if None not in insert_query_set:  # Check if all required fields are provided
+            insert_query = "INSERT INTO Tbl_Productions (Production_Name, Production_Type_Id, Image_Path) VALUES (?, ?, ?)"
+            conn = db_model.dbConnect()
+            cursor = conn.cursor()
+            try:
+                cursor.execute(insert_query, insert_query_set)
+                conn.commit()
+                cursor.close()
+                return jsonify({'message': 'Inserted successfully'}), 200
+            except Exception as e:
+                conn.rollback()
+                return jsonify({'error': f'An error occurred while inserting the values: {str(e)}'}), 500
+            finally:
+                conn.close()
+        else:
+            return jsonify({"status": 400, 'message': 'Invalid input fields'}), 400
+
+    except Exception as ex:
+        return jsonify({"status": 400, 'message': f'An error occurred: {str(ex)}'}), 400
 @app.route('/api/create_department', methods=['POST','OPTIONS'])
 def createDepartmentAPI():
     try:
@@ -594,7 +687,7 @@ def createDepartmentAPI():
             response = jsonify({'message': 'Preflight check successful'})
             response.headers.add('Access-Control-Allow-Origin', '*')
             response.headers.add('Access-Control-Allow-Methods', 'POST')
-            response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+            response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
             return response
         status, response, msg = utils.getAuthorizationDetails(request)
         if msg != "success":
@@ -690,7 +783,7 @@ def createSubDepartmentAPI():
             response = jsonify({'message': 'Preflight check successful'})
             response.headers.add('Access-Control-Allow-Origin', '*')
             response.headers.add('Access-Control-Allow-Methods', 'POST')
-            response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+            response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
             return response
         status, response, msg = utils.getAuthorizationDetails(request)
         if msg != "success":
@@ -828,7 +921,10 @@ def getSubDepartmentAPI():
             return jsonify({"status": 401, "message": msg}), response
         else:
             conn = db_model.dbConnect()
-            get_subdept = "SELECT * FROM Master_Sub_Departments"
+            # get_subdept = "SELECT * FROM Master_Sub_Departments"
+            get_subdept = f"""SELECT MS.SubDepartment_Id,MS.SubDepartment_Name,MS.Department_Id,MD.Department_Name FROM Master_Sub_Departments AS MS
+                    INNER JOIN Master_Departments AS MD ON MS.Department_Id = MD.Department_Id                              
+                    """
             sub_dep_df = pd.read_sql(get_subdept, conn)
             if len(sub_dep_df) > 0:
                 return jsonify({"status": 200, "message": "successfully", 'result': sub_dep_df.to_dict("records")})
@@ -2002,5 +2098,3 @@ def getOpenLocation():
 
 if __name__ == '__main__':
     app.run(port=8001)
-
-
