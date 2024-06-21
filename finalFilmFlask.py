@@ -3,6 +3,7 @@ from common import constant
 import pyodbc
 import os
 import jwt
+from jwt.exceptions import ExpiredSignatureError
 from models import db_model
 import pandas as pd
 from common import utils
@@ -343,19 +344,21 @@ def getCharacterDetails():
             response = jsonify({"message": "Preflight check successful"})
             response.headers.add("Access-Control-Allow-Origin", "*")
             response.headers.add("Access-Control-Allow-Methods", "POST")
-            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+            response.headers.add(
+                "Access-Control-Allow-Headers", "Content-Type,Authorization"
+            )
             return response
         status, response, msg = utils.getAuthorizationDetails(request)
         if msg != "success":
             return jsonify({"status": 401, "message": msg}), response
         else:
             Production_id = request.form.get("Production_id", None)
-            if Production_id == None:
+            if Production_id is None:
                 return (
                     jsonify(
                         {
                             "status": 400,
-                            "message": "pelase enter the Production_id filed",
+                            "message": "Please enter the Production_id field",
                         }
                     ),
                     400,
@@ -378,7 +381,7 @@ def getCharacterDetails():
                 return jsonify(
                     {
                         "status": 200,
-                        "message": "successfully",
+                        "message": "Successfully",
                         "result": crm_df.to_dict("records"),
                         "count_list": group_list,
                     }
@@ -392,12 +395,22 @@ def getCharacterDetails():
                         "count_list": [],
                     }
                 )
+    except ExpiredSignatureError as ex:
+        return (
+            jsonify(
+                {
+                    "status": 401,
+                    "message": "Token has expired",
+                }
+            ),
+            401,
+        )
     except Exception as ex:
         return (
             jsonify(
                 {
                     "status": 400,
-                    "message": f"An error occurred while updating the sence: {str(ex)}",
+                    "message": f"An error occurred: {str(ex)}",
                 }
             ),
             400,
