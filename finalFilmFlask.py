@@ -17,6 +17,7 @@ import base64
 import config
 from werkzeug.utils import secure_filename
 from extraction import main_func
+from werkzeug.exceptions import BadRequest
 
 app = Flask(__name__)
 # test=CORS(app)
@@ -49,6 +50,14 @@ def post_with_options(route):
         return wrapper
 
     return decorator
+
+
+def preflight_response():
+    response = jsonify({"message": "Preflight check successful"})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Methods", "POST")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+    return response
 
 
 @app.route("/api/login", methods=["POST", "OPTIONS"])
@@ -286,8 +295,12 @@ def getSceneDetails():
 
 
 # Count stuff
-@app.route("/api/count", methods=["GET"])
+@app.route("/api/count", methods=["GET", "OPTIONS"])  # Handle OPTIONS for preflight
 def scene_percent():
+    # Handle preflight request
+    if request.method == "OPTIONS":
+        return preflight_response()
+
     auth_header = request.headers.get("Authorization")
     if not auth_header:
         return (
@@ -337,84 +350,54 @@ def scene_percent():
         return jsonify({"status": 401, "message": "Invalid token"}), 401
 
 
+def fetch_character_details(Production_id):
+    crm_df = CRM.getCharacterDetails(Production_id)
+    if len(crm_df) == 0:
+        raise BadRequest(description="No Data Found")
+    return crm_df
+
+
 @app.route("/api/get_character_setup", methods=["POST", "OPTIONS"])
-def getCharacterDetails():
+def get_character_details():
     try:
         if request.method == "OPTIONS":
-            response = jsonify({"message": "Preflight check successful"})
-            response.headers.add("Access-Control-Allow-Origin", "*")
-            response.headers.add("Access-Control-Allow-Methods", "POST")
-            response.headers.add(
-                "Access-Control-Allow-Headers", "Content-Type,Authorization"
-            )
-            return response
+            return preflight_response()
+
         status, response, msg = utils.getAuthorizationDetails(request)
         if msg != "success":
             return jsonify({"status": 401, "message": msg}), response
         else:
             Production_id = request.form.get("Production_id", None)
-            if Production_id is None:
-                return (
-                    jsonify(
-                        {
-                            "status": 400,
-                            "message": "Please enter the Production_id field",
-                        }
-                    ),
-                    400,
-                )
-            print(response)
-            # crm_df = CRM.getCharacterDetails(Production_id, response)
-            crm_df = CRM.getCharacterDetails(Production_id)
-            if len(crm_df) > 0:
-                try:
-                    grouped_count = (
-                        crm_df.groupby("Status").size().reset_index(name="count")
-                    )
-                    total_count = grouped_count["count"].sum()
-                    grouped_count["percentage"] = (
-                        grouped_count["count"] / total_count
-                    ) * 100
-                    group_list = grouped_count.to_dict(orient="records")
-                except:
-                    group_list = []
-                return jsonify(
-                    {
-                        "status": 200,
-                        "message": "Successfully",
-                        "result": crm_df.to_dict("records"),
-                        "count_list": group_list,
-                    }
-                )
-            else:
-                return jsonify(
-                    {
-                        "status": 400,
-                        "message": "No Data Found",
-                        "result": [],
-                        "count_list": [],
-                    }
-                )
+
+        if Production_id is None:
+            return (
+                jsonify(
+                    {"status": 400, "message": "Please send the Production_id field"}
+                ),
+                400,
+            )
+
+        crm_df = fetch_character_details(Production_id)
+        grouped_count = crm_df.groupby("Status").size().reset_index(name="count")
+        total_count = grouped_count["count"].sum()
+        grouped_count["percentage"] = (grouped_count["count"] / total_count) * 100
+        group_list = grouped_count.to_dict(orient="records")
+
+        return jsonify(
+            {
+                "status": 200,
+                "message": "Successfully",
+                "result": crm_df.to_dict("records"),
+                "count_list": group_list,
+            }
+        )
+
+    except BadRequest as ex:
+        return jsonify({"status": 400, "message": str(ex)}), 400
     except ExpiredSignatureError as ex:
-        return (
-            jsonify(
-                {
-                    "status": 401,
-                    "message": "Token has expired",
-                }
-            ),
-            401,
-        )
+        return jsonify({"status": 401, "message": "Token has expired"}), 401
     except Exception as ex:
-        return (
-            jsonify(
-                {
-                    "status": 400,
-                    "message": f"An error occurred: {str(ex)}",
-                }
-            ),
-            400,
-        )
+        return jsonify({"status": 400, "message": f"An error occurred: {str(ex)}"}), 400
 
 
 @app.route("/api/get_location_setup", methods=["POST", "OPTIONS"])
@@ -2251,11 +2234,7 @@ def createlocationsAPI():
 @app.route("/upload_script", methods=["POST", "OPTIONS"])
 def uploaded_file():
     if request.method == "OPTIONS":
-        response = jsonify({"message": "Preflight check successful"})
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Methods", "POST")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        return response
+        return preflight_response()
 
     if "productname" in request.form:
         production_name = request.form["productname"]
