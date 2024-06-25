@@ -145,8 +145,11 @@ def productionDetails():
         conn.close()
 
 
-@app.route("/api/get_crew", methods=["GET"])
+@app.route("/api/get_crew", methods=["GET", "OPTIONS"])
 def getCrewDetails():
+    if request.method == "OPTIONS":
+        return preflight_response()  # Ensure preflight_response is defined and properly sets CORS headers
+
     try:
         status, response, msg = utils.getAuthorizationDetails(request)
         if msg != "success":
@@ -163,12 +166,12 @@ def getCrewDetails():
                 )
             else:
                 return jsonify(
-                    {"status": 400, "message": "No Data Found", "result": []}
+                    {"status": 404, "message": "No Data Found", "result": []}
                 )
     except Exception as ex:
         return (
             jsonify(
-                {"error": f"An error occurred while updating the sence: {str(ex)}"}
+                {"error": f"An error occurred while fetching crew details: {str(ex)}"}
             ),
             400,
         )
@@ -248,46 +251,51 @@ def uploadCrewDetails():
         )
 
 
-@app.route("/api/get_scene_setup", methods=["GET"])  # Done
+@app.route("/api/get_scene_setup", methods=["GET", "OPTIONS"])
 def getSceneDetails():
+    if request.method == "OPTIONS":
+        return preflight_response()  # Assuming preflight_response is defined elsewhere
+
     try:
         status, response, msg = utils.getAuthorizationDetails(request)
         if msg != "success":
             return jsonify({"status": 401, "message": msg}), response
-        else:
-            sd_df = SM.getSceneSetupDetails()
 
-            if len(sd_df) > 0:
-                sd_df = utils.handle_NATType(sd_df)
-                grouped_count = sd_df.groupby("Status").size().reset_index(name="count")
-                total_count = grouped_count["count"].sum()
-                grouped_count["percentage"] = (
-                    grouped_count["count"] / total_count
-                ) * 100
-                group_list = grouped_count.to_dict(orient="records")
-                return jsonify(
+        sd_df = SM.getSceneSetupDetails()
+        if len(sd_df) == 0:
+            return (
+                jsonify(
                     {
-                        "status": 200,
-                        "message": "successfully",
-                        "result": sd_df.to_dict("records"),
-                        "count_list": group_list,
-                    }
-                )
-            else:
-                return jsonify(
-                    {
-                        "status": 400,
+                        "status": 404,
                         "message": "No Data Found",
                         "result": [],
                         "count_list": [],
                     }
-                )
+                ),
+                404,
+            )
+
+        sd_df = utils.handle_NATType(sd_df)
+        grouped_count = sd_df.groupby("Status").size().reset_index(name="count")
+        total_count = grouped_count["count"].sum()
+        grouped_count["percentage"] = (grouped_count["count"] / total_count) * 100
+        group_list = grouped_count.to_dict(orient="records")
+
+        return jsonify(
+            {
+                "status": 200,
+                "message": "successfully",
+                "result": sd_df.to_dict("records"),
+                "count_list": group_list,
+            }
+        )
+
     except Exception as ex:
         return (
             jsonify(
                 {
                     "status": 400,
-                    "message": f"An error occurred while updating the sence: {str(ex)}",
+                    "message": f"An error occurred while updating the scene: {str(ex)}",
                 }
             ),
             400,
