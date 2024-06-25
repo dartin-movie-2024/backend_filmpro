@@ -148,7 +148,7 @@ def productionDetails():
 @app.route("/api/get_crew", methods=["GET", "OPTIONS"])
 def getCrewDetails():
     if request.method == "OPTIONS":
-        return preflight_response()  # Ensure preflight_response is defined and properly sets CORS headers
+        return preflight_response()
 
     try:
         status, response, msg = utils.getAuthorizationDetails(request)
@@ -410,66 +410,61 @@ def get_character_details():
 
 @app.route("/api/get_location_setup", methods=["POST", "OPTIONS"])
 def getLocationDetails():
+    if request.method == "OPTIONS":
+        return preflight_response()
+
     try:
-        if request.method == "OPTIONS":
-            response = jsonify({"message": "Preflight check successful"})
-            response.headers.add("Access-Control-Allow-Origin", "*")
-            response.headers.add("Access-Control-Allow-Methods", "POST")
-            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-            return response
         status, response, msg = utils.getAuthorizationDetails(request)
         if msg != "success":
             return jsonify({"status": 401, "message": msg}), response
-        else:
-            Production_id = request.form.get("Production_id", None)
 
-            if Production_id == None:
-                return (
-                    jsonify(
-                        {
-                            "status": 400,
-                            "message": "pelase enter the Production_id filed",
-                        }
-                    ),
-                    400,
-                )
-            # loc_df = LM.getLocationsDetails(Production_id, response)
-            loc_df = LM.getLocationsDetails(Production_id)
-            if len(loc_df) > 0:
-                try:
-                    grouped_count = (
-                        loc_df.groupby("Status").size().reset_index(name="count")
-                    )
-                    total_count = grouped_count["count"].sum()
-                    grouped_count["percentage"] = (
-                        grouped_count["count"] / total_count
-                    ) * 100
-                    group_list = grouped_count.to_dict(orient="records")
-                except:
-                    group_list = []
-                return jsonify(
-                    {
-                        "status": 200,
-                        "message": "successfully",
-                        "result": loc_df.to_dict("records"),
-                        "count_list": group_list,
-                    }
-                )
-            else:
-                return jsonify(
+        data = request.json  # Get JSON payload
+        Production_id = data.get("Production_id") if data else None
+        if Production_id is None:
+            return (
+                jsonify(
+                    {"status": 400, "message": "Please enter the Production_id field"}
+                ),
+                400,
+            )
+
+        loc_df = LM.getLocationsDetails(Production_id)
+        if loc_df.empty:
+            return (
+                jsonify(
                     {
                         "status": 400,
                         "message": "No Data Found",
                         "result": [],
                         "count_list": [],
                     }
-                )
+                ),
+                400,
+            )
+
+        try:
+            grouped_count = loc_df.groupby("Status").size().reset_index(name="count")
+            total_count = grouped_count["count"].sum()
+            grouped_count["percentage"] = (grouped_count["count"] / total_count) * 100
+            group_list = grouped_count.to_dict(orient="records")
+        except Exception as e:
+            group_list = []
+
+        return jsonify(
+            {
+                "status": 200,
+                "message": "successfully",
+                "result": loc_df.to_dict("records"),
+                "count_list": group_list,
+            }
+        )
+
     except Exception as ex:
         return (
             jsonify(
                 {
                     "status": 400,
-                    "message": f"An error occurred while updating the sence: {str(ex)}",
+                    "message": f"An error occurred while fetching location details: {str(ex)}",
                 }
             ),
             400,
