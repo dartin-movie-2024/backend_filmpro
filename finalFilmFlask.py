@@ -374,8 +374,9 @@ def get_character_details():
         status, response, msg = utils.getAuthorizationDetails(request)
         if msg != "success":
             return jsonify({"status": 401, "message": msg}), response
-        else:
-            Production_id = request.form.get("Production_id", None)
+
+        data = request.json  # Get JSON payload
+        Production_id = data.get("Production_id") if data else None
 
         if Production_id is None:
             return (
