@@ -1449,70 +1449,63 @@ def updateDesignationsAPI():
 @app.route("/api/director_search/assign_character", methods=["GET", "POST", "OPTIONS"])
 def getCharacters():
     if request.method == "OPTIONS":
-        response = jsonify({"message": "Preflight check successful"})
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Methods", "POST")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        return response
+        return preflight_response()
+
     status, response, msg = utils.getAuthorizationDetails(request)
     if msg != "success":
         return jsonify({"status": 401, "message": msg}), response
-    else:
-        try:
-            if request.method == "GET":
-                conn = db_model.dbConnect()
-                get_all_characters = "SELECT * FROM Master_Character"
-                df = pd.read_sql(get_all_characters, conn)
-                if not df.empty:
-                    df = df.fillna("")
-                    df["Assigned_date"] = pd.to_datetime(
-                        df["Assigned_date"], dayfirst=True
-                    ).fillna("NA")
-                    df.loc[df["Assigned_date"] == "NA", "Assigned_date"] = ""
-                    return jsonify(
-                        {
-                            "status": 200,
-                            "message": "successfully",
-                            "result": df.to_dict("records"),
-                        }
-                    )
-                else:
-                    return jsonify(
-                        {"status": 400, "message": "No Data Found", "result": []}
-                    )
 
-            elif request.method == "POST":
-                id_list = request.form.getlist("id")
+    try:
+        if request.method == "GET":
+            conn = db_model.dbConnect()
+            get_all_characters = "SELECT * FROM Master_Character"
+            df = pd.read_sql(get_all_characters, conn)
 
-                if not id_list:
-                    return jsonify({"error": 'No "id" parameter provided'}), 400
+            if not df.empty:
+                df = df.fillna("")
+                df["Assigned_date"] = pd.to_datetime(
+                    df["Assigned_date"], dayfirst=True
+                ).fillna("NA")
+                df.loc[df["Assigned_date"] == "NA", "Assigned_date"] = ""
+                return jsonify(
+                    {
+                        "status": 200,
+                        "message": "successfully",
+                        "result": df.to_dict("records"),
+                    }
+                )
+            else:
+                return jsonify(
+                    {"status": 400, "message": "No Data Found", "result": []}
+                )
 
-                conn = db_model.dbConnect()
-                # Select the specific columns you want and filter based on id_list
-                get_characters = f"""
-                SELECT * FROM Master_Character WHERE Character_id IN ({', '.join(id_list)})
-                """
-                df = pd.read_sql(get_characters, conn)
+        elif request.method == "POST":
+            id_list = request.form.getlist("id")
 
-                if not df.empty:
-                    # df = df.fillna("")
-                    # df['Assigned_date'] = pd.to_datetime(df['Assigned_date'], dayfirst=True).fillna("NA")
-                    # df.loc[df['Assigned_date'] == "NA", "Assigned_date"] = ""
-                    df = utils.handle_NATType(df)
-                    return jsonify(
-                        {
-                            "status": 200,
-                            "message": "successfully",
-                            "result": df.to_dict("records"),
-                        }
-                    )
-                else:
-                    return jsonify(
-                        {"status": 400, "message": "No Data Found", "result": []}
-                    )
+            if not id_list:
+                return jsonify({"error": 'No "id" parameter provided'}), 400
 
-        except Exception as ex:
-            return jsonify({"error": str(ex)}), 500
+            conn = db_model.dbConnect()
+            # Prepare SQL query to fetch characters by IDs
+            get_characters = f"SELECT * FROM Master_Character WHERE Character_id IN ({', '.join(id_list)})"
+            df = pd.read_sql(get_characters, conn)
+
+            if not df.empty:
+                df = utils.handle_NATType(df)
+                return jsonify(
+                    {
+                        "status": 200,
+                        "message": "successfully",
+                        "result": df.to_dict("records"),
+                    }
+                )
+            else:
+                return jsonify(
+                    {"status": 400, "message": "No Data Found", "result": []}
+                )
+
+    except Exception as ex:
+        return jsonify({"error": str(ex)}), 500
 
 
 @app.route("/api/director_search/assign_location", methods=["GET", "POST", "OPTIONS"])
@@ -1662,18 +1655,14 @@ def getDirectorListAPI():
 def getAsstDirectorListAPI():
     try:
         if request.method == "OPTIONS":
-            response = jsonify({"message": "Preflight check successful"})
-            response.headers.add("Access-Control-Allow-Origin", "*")
-            response.headers.add("Access-Control-Allow-Methods", "POST")
-            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-            return response
+            return preflight_response()
 
         status, response, msg = utils.getAuthorizationDetails(request)
         if msg != "success":
             return jsonify({"status": 401, "message": msg}), response
         else:
             conn = db_model.dbConnect()
-            production_id = request.form.get("production_id", None)
+            production_id = request.form.get("Production_id", None)
             if production_id == None:
                 get_director = (
                     f"SELECT * FROM Tbl_App_Users where Designation='Asst Director'"
