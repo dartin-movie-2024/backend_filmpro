@@ -1707,74 +1707,64 @@ def getAsstDirectorListAPI():
 
 @app.route("/api/update_assign_char", methods=["POST", "OPTIONS"])
 def updateAssignCharAPI():
-    try:
-        if request.method == "OPTIONS":
-            response = jsonify({"message": "Preflight check successful"})
-            response.headers.add("Access-Control-Allow-Origin", "*")
-            response.headers.add("Access-Control-Allow-Methods", "POST")
-            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-            return response
+    if request.method == "OPTIONS":
+        return preflight_response()
 
+    try:
         status, response, msg = utils.getAuthorizationDetails(request)
         if msg != "success":
-            return jsonify({"status": 401, "message": msg}), response
-        else:
-            Character_id = request.form.get("Character_id", None)
-            Assigned_To = request.form.get("Assigned_To", None)
-            if Character_id == None or eval(Character_id) == []:
-                return (
-                    jsonify(
-                        {"status": 400, "message": "Character_id field are required"}
-                    ),
-                    400,
-                )
-            if Assigned_To == None:
-                return (
-                    jsonify(
-                        {"status": 400, "message": "Assigned_To field are required"}
-                    ),
-                    400,
-                )
-            datetime_now = pd.to_datetime(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            return jsonify({"status": 401, "message": msg}), 401
 
-            Character_id = list(eval(Character_id))
-            update_data = """UPDATE Master_Character
-                                   SET Assigned_To = ?,
-                                       Assigned_date = ?
-                                   WHERE Character_id IN ({})""".format(
-                ",".join("?" for _ in Character_id)
+        # Assuming the client sends JSON data
+        data = request.json
+        Character_id = data.get("Character_id")
+        Assigned_To = data.get("Assigned_To")
+
+        if not Character_id:
+            return (
+                jsonify({"status": 400, "message": "Character_id field is required"}),
+                400,
             )
-            print(update_data)
-            conn = db_model.dbConnect()
-            cursor = conn.cursor()
-            try:
-                cursor.execute(update_data, [Assigned_To, datetime_now] + Character_id)
-                conn.commit()
-                cursor.close()
-                return jsonify({"status": 200, "message": "Updated successfully"}), 200
-            except Exception as e:
-                conn.rollback()
-                return (
-                    jsonify(
-                        {
-                            "status": 400,
-                            "message": f"An error occurred while updating the character: {str(e)}",
-                        }
-                    ),
-                    500,
-                )
-            finally:
-                conn.close()
+        if not Assigned_To:
+            return (
+                jsonify({"status": 400, "message": "Assigned_To field is required"}),
+                400,
+            )
+
+        datetime_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # Convert Character_id to list if it's not
+        if not isinstance(Character_id, list):
+            Character_id = [Character_id]
+
+        placeholders = ",".join("?" for _ in Character_id)
+        update_data = f"""UPDATE Master_Character
+                          SET Assigned_To = ?,
+                              Assigned_date = ?
+                          WHERE Character_id IN ({placeholders})"""
+
+        conn = db_model.dbConnect()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(update_data, [Assigned_To, datetime_now] + Character_id)
+            conn.commit()
+            return jsonify({"status": 200, "message": "Updated successfully"}), 200
+        except Exception as e:
+            conn.rollback()
+            return (
+                jsonify(
+                    {
+                        "status": 500,
+                        "message": f"An error occurred while updating the character: {str(e)}",
+                    }
+                ),
+                500,
+            )
+        finally:
+            cursor.close()
+            conn.close()
     except Exception as ex:
-        return (
-            jsonify(
-                {
-                    "status": 400,
-                    "message": f"An error occurred while updating the sence: {str(ex)}",
-                }
-            ),
-            400,
-        )
+        return jsonify({"status": 500, "message": f"An error occurred: {str(ex)}"}), 500
 
 
 @app.route("/api/update_assign_location", methods=["POST", "OPTIONS"])
