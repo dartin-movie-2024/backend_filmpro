@@ -2603,71 +2603,63 @@ def charAsignActorAPI():
         )
 
 
-@app.route("/api/select_character", methods=["POST"])
+@app.route("/api/select_character", methods=["POST", "OPTIONS"])
 def selectCharacterAPI():
+    if request.method == "OPTIONS":
+        return preflight_response()
+
     try:
         status, response, msg = utils.getAuthorizationDetails(request)
-        msg = "success"
         if msg != "success":
-            return jsonify({"status": 401, "message": msg}), response
-        else:
-            Character_id = request.form.get("Character_id", None)
-            if Character_id == None:
-                return jsonify(
-                    {"status": 400, "message": "Character_id field are required"}
-                )
-            else:
-                conn = db_model.dbConnect()
-                if not pd.isnull(Character_id):
-                    mc_df = pd.read_sql(
-                        f"Select * from Master_Character WHERE Character_id = {Character_id}",
-                        conn,
-                    )
-                    final_data = {}
-                    if len(mc_df) > 0:
-                        final_data["character_data"] = mc_df.to_dict("records")[0]
-                        actor_id = mc_df.iloc[0]["seleted_actor_id"]
-                    if not pd.isnull(actor_id):
-                        ad_df = pd.read_sql(
-                            f"Select * from Tbl_Actor_Details WHERE actor_id = {mc_df.iloc[0]['seleted_actor_id']}",
-                            conn,
-                        )
-                        if len(ad_df) > 0:
-                            final_data["actor_data"] = ad_df.to_dict("records")[0]
-                try:
-                    return (
-                        jsonify(
-                            {
-                                "status": 200,
-                                "message": "successfully",
-                                "result": final_data,
-                            }
-                        ),
-                        200,
-                    )
-                except Exception as e:
-                    conn.rollback()
-                    return (
-                        jsonify(
-                            {
-                                "status": 400,
-                                "message": f"An error occurred while updating the character: {str(e)}",
-                            }
-                        ),
-                        500,
-                    )
-                finally:
-                    conn.close()
-    except Exception as ex:
+            return jsonify({"status": 401, "message": msg}), 401
+
+        # Assuming the client sends JSON data
+        data = request.json
+        Character_id = data.get("Character_id")
+
+        if Character_id is None:
+            return (
+                jsonify({"status": 400, "message": "Character_id field is required"}),
+                400,
+            )
+
+        conn = db_model.dbConnect()
+        final_data = {}
+
+        if not pd.isnull(Character_id):
+            mc_df = pd.read_sql(
+                f"Select * from Master_Character WHERE Character_id = {Character_id}",
+                conn,
+            )
+
+        if not mc_df.empty:
+            final_data["character_data"] = mc_df.to_dict("records")[0]
+            actor_id = mc_df.iloc[0]["seleted_actor_id"]
+
+        if not pd.isnull(actor_id):
+            ad_df = pd.read_sql(
+                f"Select * from Tbl_Actor_Details WHERE actor_id = {mc_df.iloc[0]['seleted_actor_id']}",
+                conn,
+            )
+            if not ad_df.empty:
+                final_data["actor_data"] = ad_df.to_dict("records")[0]
+
         return (
             jsonify(
                 {
-                    "status": 400,
-                    "message": f"An error occurred while updating the sence: {str(ex)}",
+                    "status": 200,
+                    "message": "Successfully retrieved character data",
+                    "result": final_data,
                 }
             ),
-            400,
+            200,
         )
+
+    except Exception as ex:
+        return jsonify({"status": 500, "message": f"An error occurred: {str(ex)}"}), 500
+    finally:
+        if "conn" in locals():
+            conn.close()
 
 
 @app.route("/api/select_location", methods=["POST"])
